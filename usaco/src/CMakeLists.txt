@@ -1,0 +1,7 @@
+aux_source_directory (. SRC_LIST)
+foreach (F ${SRC_LIST})
+	string(LENGTH ${F} len)
+	math(EXPR subLen "${len}-2")
+	string(SUBSTRING ${F} 2 ${subLen} AppName)
+	add_executable("${AppName}" ${F})
+endforeach(F)
