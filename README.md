@@ -29,3 +29,4 @@ Online Judge
 
 # [CodeForces](http://codeforces.com/)
   - online virtual contests
+  - weekly
