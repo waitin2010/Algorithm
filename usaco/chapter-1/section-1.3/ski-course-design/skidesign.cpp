@@ -3,93 +3,52 @@ ID: come_1b1
 LANG: C++
 TASK: skidesign
  */
-#include <iostream>
+
 #include <fstream>
-#include <algorithm>
 #include <vector>
-#include <iterator>
+#include <algorithm>
 
-const int MAX_N = 1000 + 1;
-int N;
-std::vector<std::pair<int,int> > hill_data;
 
-void print()
-{
-  static int n = 0;
-  std::cout << std::endl << std::endl;
-  std::cout << "the nth:" << n++ << std::endl;
-    for( int i = 0; i < N; ++i ){
-    std::cout << hill_data[i].first << " " << hill_data[i].second << std::endl;
-  }
 
-}
 
-bool compare_hill_data( const std::pair<int,int> &a,
-			const std::pair<int,int> &b )
-{
-  if( a.first == b.first )
-    return a.second < b.second;
-  return a.first < b.first;
-}
-
-bool compare_hill_data_2( const std::pair<int, int> &a,
-			  const std::pair<int, int> &b )
-{
-  return a.second > b.second;
-}
-
-void sort_hill_data()
-{
-  std::sort( hill_data.begin(), hill_data.end(), compare_hill_data );
-
-  int i;
-  for( i = N - 2; i >=0; --i )
-    if( hill_data[i].first != hill_data[N-1].first )
-      break;
-  //  std::cout << i << "----" << hill_data[i].first << std::endl;
-  std::sort( &hill_data[i+1], &hill_data[i+1] + N - i, compare_hill_data_2 );
-}
-int solve()
-{
-
-  sort_hill_data();
-
-    print();
-
-  while( hill_data[N-1].first - hill_data[0].first >= 18 ){
-    hill_data[N-1].first--;
-    hill_data[0].first++;
-    hill_data[N-1].second++;
-    hill_data[0].second++;
-    sort_hill_data();
-
-    print();
-  }
-  
-  int result = 0;
-  for( int i = 0; i < N; ++i ){
-    result += hill_data[i].second * hill_data[i].second;
-  }
-
-  return result;
-    
-}
 int main()
 {
   std::ifstream fin("skidesign.in", std::ios::in );
 
+  int N;
+  std::vector<int> hill_height_data;
   fin >> N;
-  for( int i = 0; i < N; ++i ){
-    int a;
-    fin >> a;
-
-      hill_data.push_back( std::make_pair( a, 0 ) );
+  for( int i = 0; i < N; ++i ) {
+    int hill_height;
+    fin >> hill_height;
+    hill_height_data.push_back( hill_height );
   }
 
+  int max_hill_height = *std::max_element( hill_height_data.begin(),
+					  hill_height_data.end() );
+  int min_hill_height = *std::min_element( hill_height_data.begin(),
+					 hill_height_data.end() );
+
+  int ret = 0x7FFFFFFF;
+  for( int i = min_hill_height; i<= max_hill_height; ++i ){
+    int ret_temp = 0;
+    for( int j = 0; j < N; ++j ) {
+      if( hill_height_data[j] < i )
+	ret_temp += ( i - hill_height_data[j] ) * ( i - hill_height_data[j] );
+      if( hill_height_data[j] > i + 17 )
+	ret_temp += ( hill_height_data[j] - i - 17 ) *
+	  ( hill_height_data[j] - i - 17 );
+    }
+    ret = std::min( ret_temp, ret );
+  }
 
   std::ofstream fout("skidesign.out", std::ios::out );
-  fout << solve() << std::endl;
+
+  fout << ret << std::endl;
 
   return 0;
+
+
+    
   
 }
