@@ -12,6 +12,7 @@
 int V;
 int N;
 
+
 const int max_v = 25;
 int coins[max_v] = {0};
 
@@ -19,6 +20,42 @@ int num[max_v] = {0};
 
 int count = 0;
 int sum = 0;
+
+const int max_n = 10000;
+ long long ret[max_n] = {1};
+ long long ret2[max_n] = {0};
+
+void init();
+
+long long solve2()
+{
+  init();
+
+  for( int i = 0; i < V; i++ ){
+    for( int j = 1;j <=num[i]; ++j ){
+      int t = j * coins[i];
+      for( int k = 0; k <= N - t; ++k ){
+	  ret2[t+k] = ret[k] + ret2[t+k];
+      }
+    }
+    std::copy( std::begin( ret2 ),
+	       std::begin( ret2 ) + N + 1,
+	       std::begin( ret ) );
+      ret[0] = 1;
+#if 0
+      std::cout << i << " "
+		<< num[i] << " "
+		<< coins[i] << " "
+		<<std::endl;
+      std::copy( std::begin( ret ),
+		 std::begin( ret ) + N + 1,
+		 std::ostream_iterator<long long>(std::cout, " " ));
+      std::cout << std::endl;
+      #endif
+
+  }
+  return ret[N];
+}
 void init()
 {
   for( int i = 0; i < V; ++i )
@@ -69,11 +106,13 @@ int main()
     fin >> coins[i];
   fin.close();
 
-  init();
-  solve( 0 );
+  //init();
+  //  solve( 0 );
   std::ofstream fout( "money.out", std::ios::out);
-  fout <<count << std::endl;
+  fout << solve2() << std::endl;
   fout.close();
 
+  //std::cout << solve2() << std::endl;
+  //  std::cout << sizeof( long long ) << std::endl;
   return 0;
 }
