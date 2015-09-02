@@ -14,23 +14,23 @@ int N;
 const int max_n = 150;
 
 struct Point{
-  float x;
-  float y;
+  double x;
+  double y;
 }point[max_n];
 
-float weight[max_n][max_n];
-float dist[max_n][max_n];
+double weight[max_n][max_n];
+double dist[max_n][max_n];
 
-float distance( struct Point &p1,
+double distance( struct Point &p1,
 		struct Point &p2 )
 {
   return std::sqrt( ( p2.x - p1.x ) * (p2.x - p1.x )
 		    + (p2.y - p1.y ) * (p2.y - p1.y ) );
 }
 
-bool isConnect( float f )
+bool isConnect( double f )
 {
-  return ( std::numeric_limits<float>::max() - f ) / std::numeric_limits<float>::max() > std::numeric_limits<float>::epsilon();
+  return ( std::numeric_limits<double>::max() - f ) / std::numeric_limits<double>::max() > std::numeric_limits<double>::epsilon();
 }
 int main()
 {
@@ -50,7 +50,7 @@ int main()
   for( int i = 0; i < N; ++i ){
     for( int j = 0; j < N; ++j ){
       //std::cout << std::setw(4) << weight[i][j] << " ";
-      dist[i][j] = weight[i][j]?weight[i][j]:std::numeric_limits<float>::max();
+      dist[i][j] = weight[i][j]?weight[i][j]:std::numeric_limits<double>::max();
       if( i == j )
 	dist[i][j] = 0;
     }
@@ -60,48 +60,61 @@ int main()
   for( int k = 0; k < N; ++k ){
     for( int i = 0; i < N; ++i ){
       for( int j = 0; j < N; ++j ){
-	if( dist[i][k] + dist[k][j] < dist[i][j] )
+	if( dist[i][k] + dist[k][j] < dist[i][j] ){
 	  dist[i][j] = dist[i][k] + dist[k][j];
+	  weight[i][j] = dist[i][j];
+	}
       }
     }
   }
 #if 0
+  for( int i = 0; i < N; ++i )
+    std::cout << std::setw( 8 ) << i << " ";
+  std::cout << std::endl;
   for( int i = 0; i < N; ++i ){
     for( int j = 0; j < N; ++j ){
-      std::cout << std::setw(4) << dist[i][j] << " ";
+      std::cout << std::fixed << std::setw(12) << dist[i][j] << " ";
     }
     std::cout << std::endl;
   }
 #endif
 
-  float ret = std::numeric_limits<float>::max();
+  double ret = std::numeric_limits<double>::max();
+  double o_ret = 0;
   for( int i = 0; i < N; ++i ){
-    for( int j = i + 1; j < N; ++j ){
+    for( int j = 0; j < N; ++j ){
       if( isConnect( dist[i][j] ) ){
+	if( o_ret < dist[i][j] )
+	  o_ret = dist[i][j];
 	continue;
       }
-      float d = distance( point[i], point[j] );
+      double d = distance( point[i], point[j] );
+      #if 0
+      std::cout << point[i].x << " " << point[i].x << " "
+		<< point[j].x << " " << point[j].x << std::endl;
       std::cout << "distance" << d << std::endl;
-      float temp_ret = 0.0;
+      #endif
+      double temp_ret = 0.0;
       for( int i1 = 0; i1 < N; ++i1 ){
 	for( int j1 = 0; j1 < N; ++j1 ){
-	  if( isConnect( dist[i1][i] )
-	      && isConnect( dist[j][j1] )
+	  if( ( i1==i || isConnect( dist[i1][i] ))
+	      && ( j == j1 || isConnect( dist[j][j1] ) )
 	      && dist[i1][i] + d + dist[j][j1] > temp_ret ){
 	    temp_ret = dist[i1][i] + d + dist[j][j1];
-	    #if 0
+	  }
+	  #if 0
+	  if( isConnect( dist[i1][i] ) && isConnect( dist[j][j1] ) )
 	    std::cout << i1 << " " << i << " "
 		      << j << " " << j1 << " "
-		      << d << " "
 		      << temp_ret << " "
+		      << dist[i1][i] + d + dist[j][j1] << " "
 		      << ret << std::endl;
 	    #endif
-	  }
 	}
       }
       if( temp_ret < ret )
 	ret = temp_ret;
-      std::cout << i << " " << j << " " << temp_ret << " " << ret << std::endl << std::endl;
+      //      std::cout << i << " " << j << " " << temp_ret << " " << ret << std::endl << std::endl;
 	    
     }
   }
@@ -109,7 +122,7 @@ int main()
   
   //  std::cout << "max ret" << std::fixed << std::setprecision(6) << ret << std::endl;
   std::ofstream fout("cowtour.out", std::ios::out);
-  fout << std::fixed << std::setprecision(6) << ret << std::endl;
+  fout << std::fixed << std::setprecision(6) << (o_ret > ret ? o_ret : ret) << std::endl;
   fout.close();
   return 0;
 
