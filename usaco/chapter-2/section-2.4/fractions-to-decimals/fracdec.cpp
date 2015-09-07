@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 const int max_n = 100000;
 int child[max_n];
@@ -17,7 +18,7 @@ int start;
 
 int N,D;
 
-std::ofstream fout;
+std::ofstream ffout;
 
 void solve(){
   dec = N / D;
@@ -30,23 +31,21 @@ void solve(){
     int n = N;
     do {
       n *= 10;
-      if( visited[n] )
+      if( n < max_n && visited[n] )
 	break;
       zero[N]++;
     }while( n < D );
 
-    if( visited[n] ){
+    if( n < max_n && visited[n] ){
       N = n;
       break;
     }
     num[N] = n / D;
     child[N] = n % D;
-    //    std::cout << N << ":" << num[N] << " " << n % D << std::endl;
     N = n % D;
-
-
   }
 
+  std::stringstream fout;
   int first = 0;
   fout << dec << ".";
   for( int i = start; i!= 0 && (i != N || first != 1); i = child[i] ){
@@ -62,6 +61,13 @@ void solve(){
   if( start == N && child[start] == 0 )
     fout << "0";
   fout << std::endl;
+
+  std::string temp = fout.str();
+  for( int i = 0; i < temp.size(); ++i ){
+    ffout << temp[i];
+    if( (i+1) % 76 == 0 )
+      ffout << std::endl;
+  }
   #if 0
   std::cout << start << std::endl;
   std::cout << N << std::endl;
@@ -75,9 +81,9 @@ int main(){
   fin.close();
 
   
-  fout.open( "fracdec.out", std::ios::out);
+  ffout.open( "fracdec.out", std::ios::out);
   solve();
-  fout.close();
+  ffout.close();
 
   return 0;
 }
