@@ -8,9 +8,12 @@
 #include <fstream>
 #include <algorithm>
 #include <iterator>
+#include <map>
 
 const int max_v = 10000+10;
 //int data[max_v][max_v];
+
+std::map<std::pair<int, int>, int> data;
 
 int M,N;
 
@@ -45,11 +48,15 @@ int solve( int m, int n ){
     ret = m / cls[n].m * cls[n].p;
   }else {
   
-    //    if( data[n-1][m] == 0 )
+    if( data.find( std::make_pair( n - 1, m ) ) == data.end() )
       ret1 = solve( m, n - 1 );
+    else
+      ret1 = data[std::make_pair( n -1, m )];
 
-      //    if( data[n][m-cls[n].m] == 0 )
+    if( data.find( std::make_pair( n, m - cls[n].m ) ) == data.end() )
       ret2 = solve( m - cls[n].m, n );
+    else
+      ret2 = data[std::make_pair( n, m - cls[n].m )];
   
     //    data[n][m] = std::max( data[n-1][m],
     //			   data[n][m-cls[n].m] >=0 ?data[n][m-cls[n].m] + cls[n].p:0);
@@ -59,6 +66,8 @@ int solve( int m, int n ){
   //  std::cout << n << ":" << m << " " << data[n][m] << std::endl;
   //  return data[n][m];
   //  std::cout << m << " " << n << ":" << ret1 << " " << ret2 << " " << ret << std::endl;
+  data.insert( std::make_pair( std::make_pair( n, m ), ret ) );
+  
   return ret;
 }
 
