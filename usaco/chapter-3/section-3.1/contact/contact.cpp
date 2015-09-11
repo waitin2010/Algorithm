@@ -104,12 +104,16 @@ void computeLPSArray( char *pat, int M, int *lps ){
 }
 
 int KMPSearch( char *pat, char *txt ){
-  int ret = 0;
+
   
+  int ret = 0;
+
+  #if 1
   int M = strlen( pat );
   int N = strlen( txt );
 
-  int *lps = (int * ) malloc( sizeof( int ) * M );
+  //  int *lps = (int * ) malloc( sizeof( int ) * M );
+  int lps[14];
   int j = 0;
 
   computeLPSArray( pat, M, lps );
@@ -131,8 +135,9 @@ int KMPSearch( char *pat, char *txt ){
 	i = i+1;
     }
   }
-  free(lps);
+  //  free(lps);
   return ret;
+  #endif
 }
     
 
@@ -142,9 +147,10 @@ int KMPSearch( char *pat, char *txt ){
 void solve( ){
   for( int i = 0; i < count; ++i ){
     num[i].i = i;
-    num[i].c = solve_x( i );
-    //num[i].c = KMPSearch( seq[i], str );
+    //num[i].c = solve_x( i );
+    num[i].c = KMPSearch( seq[i], str );
   }
+  std::cout << strlen( str ) << " " << count  << std::endl;
 
   std::stable_sort( std::begin( num ),
 	     std::begin( num ) + count,
