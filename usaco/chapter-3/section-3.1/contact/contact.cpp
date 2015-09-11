@@ -80,10 +80,70 @@ for( int i = 0; i <= std::max( -1, int(strlen( str ) - len )); ++i ){
   return ret;
 }
 
+void computeLPSArray( char *pat, int M, int *lps ){
+  int len = 0;
+  int i;
+
+  lps[0] = 0;
+  i = 1;
+
+  while ( i < M ){
+    if( pat[i] == pat[len] ){
+      len++;
+      lps[i] = len;
+      i++;
+    }else {
+      if( len != 0 ){
+	len = lps[len-1];
+      }else{
+	lps[i] = 0;
+	++i;
+      }
+    }
+  }
+}
+
+int KMPSearch( char *pat, char *txt ){
+  int ret = 0;
+  
+  int M = strlen( pat );
+  int N = strlen( txt );
+
+  int *lps = (int * ) malloc( sizeof( int ) * M );
+  int j = 0;
+
+  computeLPSArray( pat, M, lps );
+
+  int i = 0;
+  while( i < N ){
+    if( pat[j] == txt[i] ){
+      ++j;
+      ++i;
+    }
+
+    if( j == M ){
+      ++ret;
+      j = lps[j-1];
+    }else if( i < N && pat[j] != txt[i] ){
+      if( j != 0 )
+	j = lps[j-1];
+      else
+	i = i+1;
+    }
+  }
+  free(lps);
+  return ret;
+}
+    
+
+    
+      
+  
 void solve( ){
   for( int i = 0; i < count; ++i ){
     num[i].i = i;
     num[i].c = solve_x( i );
+    //num[i].c = KMPSearch( seq[i], str );
   }
 
   std::stable_sort( std::begin( num ),
