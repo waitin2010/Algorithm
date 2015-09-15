@@ -42,7 +42,8 @@ int main(){
 	     
 
   int ret = 0;
-  for( int i = 0; i <= len; ++i ){
+  int len1 = 0x1 <<( n - 1);
+  for( int i = len1; i <= len; ++i ){
     int c = 0;
     for( int j = 0; j < n; ++j )
       if( bits[j] & i )
