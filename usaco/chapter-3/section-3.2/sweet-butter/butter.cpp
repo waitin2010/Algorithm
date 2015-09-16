@@ -50,7 +50,7 @@ void solve(){
       if( i == j )
 	dist[i][j] = 0;
       else 
-	dist[i][j] = std::numeric_limits<int>::max();
+	dist[i][j] = max_val;
       if( adj[i][j] != 0 )
 	dist[i][j] = adj[i][j];
     }
@@ -59,11 +59,13 @@ void solve(){
   //  print_dist();
   for( int k = 1; k <= p; ++k ){
     for( int i = 1; i <= p; ++i ){
-      for( int j = 1; j <= p; ++j ){
-	if( dist[i][k] != std::numeric_limits<int>::max()
-	    && dist[k][j] != std::numeric_limits<int>::max()
-	    && dist[i][k] + dist[k][j] < dist[i][j] )
+      for( int j = i; j <= p; ++j ){
+	if( dist[i][k] != max_val
+	    && dist[k][j] != max_val
+	    && dist[i][k] + dist[k][j] < dist[i][j] ){
 	  dist[i][j] = dist[i][k] + dist[k][j];
+	  dist[j][i] = dist[i][j];
+	}
       }
     }
   }
