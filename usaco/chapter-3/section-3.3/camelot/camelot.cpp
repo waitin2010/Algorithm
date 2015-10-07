@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <iterator>
 #include <iomanip>
+#include <ctime>
 
 
 int r, c;
@@ -90,11 +91,13 @@ void knight_short_path(){
 }
 
 void king_knight_short_path(){
+  #if 1
   for( int i = 0; i < r * c; ++i){
     for( int j = 0;j < r * c; ++j ){
     	kkdist[i][j] = max_dist;
     }
   }
+  #endif
   for( int i = 0; i < r * c; ++i){
     for( int j = 0; j < kcount; ++j ){
       for( int k = 0; k < r * c; ++k ){
@@ -117,9 +120,21 @@ void king_knight_short_path(){
 }
 
 int solve(){
+  clock_t t;
+  t = clock();
   king_short_path();
+  clock_t tt = clock() - t;
+  t = clock();
+  std::cout << "king short path\t" << float(tt) / CLOCKS_PER_SEC << std::endl;
   knight_short_path();
+  tt = clock() - t;
+  t = clock();
+  std::cout << "knight short path\t" << float(tt) / CLOCKS_PER_SEC << std::endl;
   king_knight_short_path();
+  tt = clock() - t;
+  t = clock();
+  std::cout << "king knight short path\t" << float(tt) / CLOCKS_PER_SEC << std::endl;
+
 
   int d = max_dist;
   for( int i = 0; i < r * c; ++i){
@@ -127,6 +142,7 @@ int solve(){
     for( int j = 0; j < kcount; ++j ){
       dd += dist[i][knight[j]];
     }
+    #if 1
     int ddd = max_rc;
     for( int k = 0; k < kcount; ++k ){
       int j = knight[k];
@@ -144,6 +160,7 @@ int solve(){
     else{
       dd += kdist[i];
     }
+    #endif
     if( dd < d ){
       d = dd;
       //  std::cout << i << " " << d << " " << dd  << std::endl;
